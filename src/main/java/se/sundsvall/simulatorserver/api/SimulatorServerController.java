@@ -27,24 +27,24 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Simulations")
 public class SimulatorServerController {
 
-	@PostMapping(path = "/response", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/response", consumes = APPLICATION_JSON_VALUE, produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
 	@Operation(summary = "Post request and response with the specified status and body.")
-	public ResponseEntity<Object> getSuccessfulResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) Integer delay,
-		@RequestParam(required = true) Status status,
-		@RequestBody(required = false) Object object) throws InterruptedException {
+	public ResponseEntity<Object> getSuccessfulResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
+		@RequestParam(required = true) final Status status,
+		@RequestBody(required = false) final Object object) throws InterruptedException {
 		sleep(delay);
 
 		return ResponseEntity.status(HttpStatus.valueOf(status.getStatusCode())).body(object);
 	}
 
-	@GetMapping(path = "/response", produces = APPLICATION_PROBLEM_JSON_VALUE)
+	@GetMapping(path = "/response", produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
 	@Operation(summary = "Get response with the specified fields in Problem-object.")
-	public ResponseEntity<Problem> getErrorResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) Integer delay,
-		@RequestParam(required = true) Status status,
-		@RequestParam(required = false) String title,
-		@RequestParam(required = false) String detail,
-		@RequestParam(required = false) String type,
-		@RequestParam(required = false) String instance) throws InterruptedException {
+	public ResponseEntity<Problem> getErrorResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
+		@RequestParam(required = true) final Status status,
+		@RequestParam(required = false) final String title,
+		@RequestParam(required = false) final String detail,
+		@RequestParam(required = false) final String type,
+		@RequestParam(required = false) final String instance) throws InterruptedException {
 		sleep(delay);
 
 		final var problem = Problem.builder()
@@ -58,7 +58,7 @@ public class SimulatorServerController {
 		return ResponseEntity.status(HttpStatus.valueOf(status.getStatusCode())).body(problem);
 	}
 
-	private void sleep(Integer delay) throws InterruptedException {
+	private void sleep(final Integer delay) throws InterruptedException {
 		if (delay != null) {
 			Thread.sleep(delay);
 		}
