@@ -123,4 +123,17 @@ class ApplicationTests {
 			.andExpect(jsonPath("$.detail").value(Matchers.containsString("Failed to convert value of type 'java.lang.String' to required type 'org.zalando.problem.Status'")));
 	}
 
+	@Test
+	void testSort() throws Exception {
+
+		Status status = Status.OK;
+
+		mockMvc.perform(
+				get("/simulations/response")
+					.queryParam("sortSize", "2")
+					.queryParam("status", status.toString()))
+			.andExpect(status().is(status.getStatusCode()));
+
+	}
+
 }

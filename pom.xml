@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>se.sundsvall</groupId>
 	<artifactId>api-simulator-service</artifactId>
-	<version>2.0</version>
+	<version>2.1</version>
 	<name>api-simulator-service</name>
 	<description>A simulator server used to simulate different kind of responses. Used by clients to test different behaviors.</description>
 	<properties>
