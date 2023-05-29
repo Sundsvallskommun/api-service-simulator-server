@@ -6,7 +6,10 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import jakarta.validation.constraints.Max;
 import org.springframework.http.HttpStatus;
@@ -52,15 +55,13 @@ public class SimulatorServerController {
 		@Parameter(description = "Sort a list of sortSize * 10000 UUIDs") @RequestParam(required = false) @Max(100) final Integer sortSize) throws InterruptedException {
 		sleep(delay);
 
-		if(sortSize != null) {
-			Collection<String> uuids = new ArrayList<>();
-			for (int i = 0; i < sortSize * 10000; i++) {
-				uuids.add(UUID.randomUUID().toString());
-				Thread.yield();
-			}
-			uuids.stream().sorted().toList();
-		}
-
+		Optional.ofNullable(sortSize)
+			.ifPresent(size -> {
+				IntStream.range(0, size * 10000)
+					.mapToObj(i -> UUID.randomUUID().toString())
+					.sorted()
+					.toList();
+			});
 
 		final var problem = Problem.builder()
 			.withStatus(status)
