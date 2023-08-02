@@ -4,14 +4,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import jakarta.validation.constraints.Max;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,12 +26,15 @@ import org.zalando.problem.Status;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
 
 @RestController
 @Validated
 @RequestMapping("/simulations")
 @Tag(name = "Simulations")
 public class SimulatorServerController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorServerController.class);
 
 	@PostMapping(path = "/response", consumes = APPLICATION_JSON_VALUE, produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
 	@Operation(summary = "Post request and response with the specified status and body.")
@@ -57,10 +59,12 @@ public class SimulatorServerController {
 
 		Optional.ofNullable(sortSize)
 			.ifPresent(size -> {
-				IntStream.range(0, size * 10000)
+				final List<String> result = IntStream.range(0, size * 10000)
 					.mapToObj(i -> UUID.randomUUID().toString())
 					.sorted()
 					.toList();
+
+				LOGGER.info("Sorted a list of size: {}", result.size());
 			});
 
 		final var problem = Problem.builder()
