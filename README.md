@@ -4,7 +4,7 @@ A simulator server used for testing different kind of responses. Options to cont
 ## Config
 
 - **API Gateway:**                  api-i-test.sundsvall.se
-    - **Endpoint:**                 Production & Sandbox
+    - **Endpoint:**                 Production
 - **Server:**                       microservices-test.sundsvall.se
 
 ## Run application locally
