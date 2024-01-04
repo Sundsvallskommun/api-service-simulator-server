@@ -19,8 +19,7 @@
 		<exposed.app.port>8080</exposed.app.port>
 		<published.container.port.test>8729</published.container.port.test>
 		<published.container.port.production>8732</published.container.port.production>
-		 
-			</properties>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -35,17 +34,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>**/Application*</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
