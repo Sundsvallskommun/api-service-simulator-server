@@ -8,7 +8,7 @@ A simulator server used for testing different kind of responses. Options to cont
 - **Server:**                       microservices-test.sundsvall.se
 
 ## Run application locally
-From root-folder run: `./mvnw spring-boot:run`
+From project root-folder run: `./mvnw spring-boot:run`
 
 Welcome-page at: http://localhost:8080
 
