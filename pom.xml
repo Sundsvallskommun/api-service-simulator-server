@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>se.sundsvall.dept44</groupId>
 		<artifactId>dept44-service-parent</artifactId>
-		<version>5.0.0</version>
+		<version>5.0.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
@@ -15,10 +15,7 @@
 	<description>A simulator server used to simulate different kind of responses. Used by clients to test different behaviors.</description>
 	<properties>
 		<!-- CI/CD properties -->
-		<docker.image.name>ms-simulatorserver</docker.image.name>
 		<exposed.app.port>8080</exposed.app.port>
-		<published.container.port.test>8729</published.container.port.test>
-		<published.container.port.production>8732</published.container.port.production>
 	</properties>
 	<dependencies>
 		<dependency>
