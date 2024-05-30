@@ -15,10 +15,7 @@
 	<description>A simulator server used to simulate different kind of responses. Used by clients to test different behaviors.</description>
 	<properties>
 		<!-- CI/CD properties -->
-		<docker.image.name>ms-simulatorserver</docker.image.name>
 		<exposed.app.port>8080</exposed.app.port>
-		<published.container.port.test>8729</published.container.port.test>
-		<published.container.port.production>8732</published.container.port.production>
 	</properties>
 	<dependencies>
 		<dependency>
