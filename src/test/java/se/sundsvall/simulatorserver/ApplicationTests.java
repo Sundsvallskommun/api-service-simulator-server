@@ -129,9 +129,9 @@ class ApplicationTests {
 		Status status = Status.OK;
 
 		mockMvc.perform(
-				get("/simulations/response")
-					.queryParam("sortSize", "2")
-					.queryParam("status", status.toString()))
+			get("/simulations/response")
+				.queryParam("sortSize", "2")
+				.queryParam("status", status.toString()))
 			.andExpect(status().is(status.getStatusCode()));
 
 	}

@@ -36,7 +36,9 @@ public class SimulatorServerController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorServerController.class);
 
-	@PostMapping(path = "/response", consumes = APPLICATION_JSON_VALUE, produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
+	@PostMapping(path = "/response", consumes = APPLICATION_JSON_VALUE, produces = {
+		APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE
+	})
 	@Operation(summary = "Post request and response with the specified status and body.")
 	public ResponseEntity<Object> getSuccessfulResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
 		@RequestParam(required = true) final Status status,
@@ -46,7 +48,9 @@ public class SimulatorServerController {
 		return ResponseEntity.status(HttpStatus.valueOf(status.getStatusCode())).body(object);
 	}
 
-	@GetMapping(path = "/response", produces = { APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
+	@GetMapping(path = "/response", produces = {
+		APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE
+	})
 	@Operation(summary = "Get response with the specified fields in Problem-object.")
 	public ResponseEntity<Problem> getErrorResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
 		@RequestParam(required = true) final Status status,
