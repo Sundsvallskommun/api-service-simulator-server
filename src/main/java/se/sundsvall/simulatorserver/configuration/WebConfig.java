@@ -7,8 +7,8 @@ import se.sundsvall.simulatorserver.api.StatusToEnumConverter;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new StatusToEnumConverter());
-    }
+	@Override
+	public void addFormatters(FormatterRegistry registry) {
+		registry.addConverter(new StatusToEnumConverter());
+	}
 }
