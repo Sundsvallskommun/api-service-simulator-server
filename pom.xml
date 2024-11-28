@@ -13,10 +13,7 @@
 	<version>2.1</version>
 	<name>api-simulator-service</name>
 	<description>A simulator server used to simulate different kind of responses. Used by clients to test different behaviors.</description>
-	<properties>
-		<!-- CI/CD properties -->
-		<exposed.app.port>8080</exposed.app.port>
-	</properties>
+	<properties />
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
