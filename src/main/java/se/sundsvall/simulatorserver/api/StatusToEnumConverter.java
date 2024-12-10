@@ -1,7 +1,6 @@
 package se.sundsvall.simulatorserver.api;
 
 import javax.annotation.Nonnull;
-
 import org.springframework.core.convert.converter.Converter;
 import org.zalando.problem.Status;
 
