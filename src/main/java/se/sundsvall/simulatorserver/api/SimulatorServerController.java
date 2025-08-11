@@ -61,7 +61,13 @@ public class SimulatorServerController {
 
 		Optional.ofNullable(sortSize)
 			.ifPresent(size -> {
-				final List<String> result = IntStream.range(0, size * 10000)
+				// Validate size to prevent overflow and negative values
+				if (size < 0 || size > 100) {
+					LOGGER.warn("Invalid sortSize value: {}. Must be between 0 and 100.", size);
+					return;
+				}
+				final int listSize = size * 10000;
+				final List<String> result = IntStream.range(0, listSize)
 					.mapToObj(i -> UUID.randomUUID().toString())
 					.sorted()
 					.toList();
