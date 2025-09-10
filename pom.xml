@@ -6,7 +6,6 @@
 		<artifactId>dept44-service-parent</artifactId>
 		<version>6.0.12</version>
 		<relativePath />
-		<!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
 	<artifactId>api-simulator-service</artifactId>

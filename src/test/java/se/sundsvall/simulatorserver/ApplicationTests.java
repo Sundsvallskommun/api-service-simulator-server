@@ -26,7 +26,7 @@ class ApplicationTests {
 	private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 	@Autowired
-	MockMvc mockMvc;
+	private MockMvc mockMvc;
 
 	@ParameterizedTest
 	@EnumSource(Status.class)
@@ -134,5 +134,4 @@ class ApplicationTests {
 			.andExpect(status().is(status.getStatusCode()));
 
 	}
-
 }
