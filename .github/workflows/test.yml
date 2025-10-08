@@ -9,17 +9,15 @@ on:
 permissions: read-all
 
 jobs:
-  build:
+  gen-sbom:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - uses: advanced-security/generate-sbom-action@v1
+      id: gensbom
+    - uses: actions/upload-artifact@v4
+      with:
+        name: sbom
+        path: ${{ steps.gensbom.outputs.fileName }}
 
-      - uses: advanced-security/sbom-generator-action@v0.0.1
-        id: sbom
-        env: 
-          GITHUB_TOKEN: ${{ github.token }}
-      - uses: actions/upload-artifact@v4
-        with: 
-          path: ${{steps.sbom.outputs.fileName }}
-          name: "SBOM"
+
