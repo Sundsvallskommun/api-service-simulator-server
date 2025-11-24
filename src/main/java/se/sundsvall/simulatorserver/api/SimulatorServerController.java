@@ -1,7 +1,6 @@
 package se.sundsvall.simulatorserver.api;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,15 +29,13 @@ import org.zalando.problem.Status;
 @Validated
 @RequestMapping("/simulations")
 @Tag(name = "Simulations")
-public class SimulatorServerController {
+class SimulatorServerController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorServerController.class);
 
-	@PostMapping(path = "/response", consumes = APPLICATION_JSON_VALUE, produces = {
-		APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE
-	})
+	@PostMapping(path = "/response", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	@Operation(summary = "Post request and response with the specified status and body.")
-	public ResponseEntity<Object> getSuccessfulResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
+	ResponseEntity<Object> getSuccessfulResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
 		@RequestParam(required = true) final Status status,
 		@RequestBody(required = false) final Object object) throws InterruptedException {
 		sleep(delay);
@@ -46,11 +43,9 @@ public class SimulatorServerController {
 		return ResponseEntity.status(HttpStatus.valueOf(status.getStatusCode())).body(object);
 	}
 
-	@GetMapping(path = "/response", produces = {
-		APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE
-	})
+	@GetMapping(path = "/response", produces = APPLICATION_JSON_VALUE)
 	@Operation(summary = "Get response with the specified fields in Problem-object.")
-	public ResponseEntity<Problem> getErrorResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
+	ResponseEntity<Problem> getErrorResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
 		@RequestParam(required = true) final Status status,
 		@RequestParam(required = false) final String title,
 		@RequestParam(required = false) final String detail,
@@ -61,7 +56,13 @@ public class SimulatorServerController {
 
 		Optional.ofNullable(sortSize)
 			.ifPresent(size -> {
-				final List<String> result = IntStream.range(0, size * 10000)
+				// Validate size to prevent overflow and negative values
+				if (size < 0 || size > 100) {
+					LOGGER.warn("Invalid sortSize value: {}. Must be between 0 and 100.", size);
+					return;
+				}
+				final int listSize = size * 10000;
+				final List<String> result = IntStream.range(0, listSize)
 					.mapToObj(i -> UUID.randomUUID().toString())
 					.sorted()
 					.toList();
