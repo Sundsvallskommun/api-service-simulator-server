@@ -1,17 +1,18 @@
 package se.sundsvall.simulatorserver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.zalando.problem.Status;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,14 +24,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ApplicationTests {
 
-	private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+	private final ObjectMapper mapper = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@ParameterizedTest
-	@EnumSource(Status.class)
-	void testGetForAllStatuses(Status status) throws Exception {
+	@EnumSource(value = HttpStatus.class, mode = EnumSource.Mode.EXCLUDE, names = {
+		"PAYLOAD_TOO_LARGE", "UNPROCESSABLE_ENTITY"
+	})
+	void testGetForAllStatuses(HttpStatus status) throws Exception {
 
 		String detail = "Some example detail.";
 		String type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1";
@@ -38,21 +41,23 @@ class ApplicationTests {
 
 		mockMvc.perform(
 			get("/simulations/response")
-				.queryParam("status", status.toString())
+				.queryParam("status", String.valueOf(status.value()))
 				.queryParam("detail", detail)
 				.queryParam("type", type)
 				.queryParam("instance", instance))
-			.andExpect(status().is(status.getStatusCode()))
+			.andExpect(status().is(status.value()))
 			.andExpect(jsonPath("$.title").value(status.getReasonPhrase()))
-			.andExpect(jsonPath("$.status").value(status.getStatusCode()))
+			.andExpect(jsonPath("$.status").value(status.value()))
 			.andExpect(jsonPath("$.detail").value(detail))
 			.andExpect(jsonPath("$.type").value(type))
 			.andExpect(jsonPath("$.instance").value(instance));
 	}
 
 	@ParameterizedTest
-	@EnumSource(Status.class)
-	void testPostForAllStatuses(Status status) throws Exception {
+	@EnumSource(value = HttpStatus.class, mode = EnumSource.Mode.EXCLUDE, names = {
+		"PAYLOAD_TOO_LARGE", "UNPROCESSABLE_ENTITY"
+	})
+	void testPostForAllStatuses(HttpStatus status) throws Exception {
 		TestClass testClassRequest = new TestClass();
 		testClassRequest.setField1("Test string");
 		testClassRequest.setField2(123);
@@ -60,12 +65,12 @@ class ApplicationTests {
 
 		String responseBody = mockMvc.perform(
 			post("/simulations/response")
-				.queryParam("status", status.toString())
+				.queryParam("status", String.valueOf(status.value()))
 				.content(mapper.writeValueAsString(testClassRequest)).contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().is(status.getStatusCode()))
+			.andExpect(status().is(status.value()))
 			.andReturn().getResponse().getContentAsString();
 
-		TestClass testClassResponse = new ObjectMapper().readValue(responseBody, TestClass.class);
+		TestClass testClassResponse = JsonMapper.builder().build().readValue(responseBody, TestClass.class);
 
 		assertThat(testClassRequest).isEqualTo(testClassResponse);
 	}
@@ -73,21 +78,21 @@ class ApplicationTests {
 	@Test
 	void testGetDelay() throws Exception {
 
-		Status status = Status.INTERNAL_SERVER_ERROR;
+		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
 		mockMvc.perform(
 			get("/simulations/response")
 				.queryParam("delay", "1000")
-				.queryParam("status", status.toString()))
-			.andExpect(status().is(status.getStatusCode()))
+				.queryParam("status", String.valueOf(status.value())))
+			.andExpect(status().is(status.value()))
 			.andExpect(jsonPath("$.title").value(status.getReasonPhrase()))
-			.andExpect(jsonPath("$.status").value(status.getStatusCode()));
+			.andExpect(jsonPath("$.status").value(status.value()));
 	}
 
 	@Test
 	void testPostDelay() throws Exception {
 
-		Status status = Status.BAD_REQUEST;
+		HttpStatus status = HttpStatus.BAD_REQUEST;
 
 		TestClass testClassRequest = new TestClass();
 		testClassRequest.setField1("Test string");
@@ -97,12 +102,12 @@ class ApplicationTests {
 		String responseBody = mockMvc.perform(
 			post("/simulations/response")
 				.queryParam("delay", "2000")
-				.queryParam("status", status.toString())
+				.queryParam("status", String.valueOf(status.value()))
 				.content(mapper.writeValueAsString(testClassRequest)).contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().is(status.getStatusCode()))
+			.andExpect(status().is(status.value()))
 			.andReturn().getResponse().getContentAsString();
 
-		TestClass testClassResponse = new ObjectMapper().readValue(responseBody, TestClass.class);
+		TestClass testClassResponse = JsonMapper.builder().build().readValue(responseBody, TestClass.class);
 
 		assertThat(testClassRequest).isEqualTo(testClassResponse);
 	}
@@ -118,20 +123,20 @@ class ApplicationTests {
 		mockMvc.perform(post("/simulations/response")
 			.queryParam("status", "12345")
 			.content(mapper.writeValueAsString(testClassRequest)).contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().is(Status.BAD_REQUEST.getStatusCode()))
-			.andExpect(jsonPath("$.detail").value(Matchers.containsString("Failed to convert value of type 'java.lang.String' to required type 'org.zalando.problem.Status'")));
+			.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+			.andExpect(jsonPath("$.detail").value(Matchers.containsString("Failed to convert 'status' with value: '12345'")));
 	}
 
 	@Test
 	void testSort() throws Exception {
 
-		Status status = Status.OK;
+		HttpStatus status = HttpStatus.OK;
 
 		mockMvc.perform(
 			get("/simulations/response")
 				.queryParam("sortSize", "2")
-				.queryParam("status", status.toString()))
-			.andExpect(status().is(status.getStatusCode()));
+				.queryParam("status", String.valueOf(status.value())))
+			.andExpect(status().is(status.value()));
 
 	}
 }

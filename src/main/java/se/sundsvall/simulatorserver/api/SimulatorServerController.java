@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.zalando.problem.Problem;
-import org.zalando.problem.Status;
+import se.sundsvall.dept44.problem.Problem;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -36,17 +35,17 @@ class SimulatorServerController {
 	@PostMapping(path = "/response", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	@Operation(summary = "Post request and response with the specified status and body.")
 	ResponseEntity<Object> getSuccessfulResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
-		@RequestParam(required = true) final Status status,
+		@RequestParam(required = true) final HttpStatus status,
 		@RequestBody(required = false) final Object object) throws InterruptedException {
 		sleep(delay);
 
-		return ResponseEntity.status(HttpStatus.valueOf(status.getStatusCode())).body(object);
+		return ResponseEntity.status(status).body(object);
 	}
 
 	@GetMapping(path = "/response", produces = APPLICATION_JSON_VALUE)
 	@Operation(summary = "Get response with the specified fields in Problem-object.")
 	ResponseEntity<Problem> getErrorResponse(@Parameter(description = "Delay in milliseconds") @RequestParam(required = false) final Integer delay,
-		@RequestParam(required = true) final Status status,
+		@RequestParam(required = true) final HttpStatus status,
 		@RequestParam(required = false) final String title,
 		@RequestParam(required = false) final String detail,
 		@RequestParam(required = false) final String type,
@@ -78,7 +77,7 @@ class SimulatorServerController {
 			.withInstance(instance == null ? null : URI.create(instance.replace(" ", "_")))
 			.build();
 
-		return ResponseEntity.status(HttpStatus.valueOf(status.getStatusCode())).body(problem);
+		return ResponseEntity.status(status).body(problem);
 	}
 
 	private void sleep(final Integer delay) throws InterruptedException {
